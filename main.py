@@ -32,7 +32,7 @@ login_submit = '/html/body/div/div/main/div/div/div/div/form/section[2]/div[1]/i
 
 #health check element paths
 health_form_open = '/html/body/header/div[2]/div/div/div/nav/div/div[2]/form/div/a'
-health_form_already_done = '/html/body/div/div/main/div/div/div[1]/div'
+health_form_already_done = '/html/body/div/div/main/div/div/div[2]/button'
 q1_none = '/html/body/div/div/main/div/div/div[3]/div/div[2]/button[4]'
 q1_next = '/html/body/div/div/main/div/div/div[3]/div/div[3]/button'
 q2_none = '/html/body/div/div/main/div/div/div[3]/div/div[3]/button'
@@ -51,7 +51,7 @@ try:
     print("Openeing Firefox and logging in...\n")
     driver = webdriver.Firefox()
     driver.get('https://www.asu.edu/healthcheck/preferences.html')
-    time.sleep(2)
+    time.sleep(3)
 except:
     print("\nError... Looks Like you do not have FireFox installed!\nOr the URL to the form has changed!")
     sys.exit()
@@ -88,25 +88,26 @@ except:
 try:
     driver.find_element_by_xpath(health_form_already_done)
 except:
+
     #Q1 "Are you experiencing new or worsening of any of the following?"
     driver.find_element_by_xpath(q1_none).click()
     print("*\n")
-    time.sleep(0.1)
+    time.sleep(0.5)
 
     #Q1 next
     driver.find_element_by_xpath(q1_next).click()
     print("*\n")
-    time.sleep(0.1)
+    time.sleep(0.5)
 
     #Q2 
     driver.find_element_by_xpath(q2_none).click()
     print("*\n")
-    time.sleep(0.1)
+    time.sleep(0.5)
 
     #done
     driver.find_element_by_xpath(submit).click()
     print("*\n")
-    time.sleep(0.1)
+    time.sleep(0.5)
 
     print("Done! Now closing your browser...")
     print(creds)
