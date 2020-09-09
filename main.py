@@ -2,28 +2,57 @@
 # give this project a lil star on GitHub if you're looking at the source code :)
 
 import time, json, sys
+from getpass import getpass
+from os.path import exists
 from selenium import webdriver
+from cryptography.fernet import Fernet
 
 creds = "\n\n*** Created by Missionloyd :) ***\nhttps://github.com/missionloyd\n"
 
-print("\n*** Hello, this is your automatic health checker ***\n\nFor issues/errors, please go to this link:\nhttps://github.com/missionloyd\n")
+print("\n*** Hello, this is your automatic health checker ***\n\nFor issues/errors, please go to this link:\nhttps://github.com/missionloyd/asu-auto-health-check/issues\n")
 time.sleep(1)
 
-#open config file for credentials
-with open("config.json","r+") as f:
-    config = json.load(f)
+#credentials to My ASU
+credential = {
+    "username": None,
+    "password": None
+}
 
-    #first time login
-    if (config["username"] == "" or config["password"] == ""):
-            print("Please fill in your My ASU credentials\n(Your info will be saved locally and will NOT be shared to ANYONE)\n")
-            config["username"] = input("Username: ")
-            config["password"] = input("Password: ")
-            f.seek(0)
-            json.dump(config, f, indent=4)
-            f.truncate()
+#ask user for credentials
+def get_credential():
+    print("Please fill in your My ASU credentials\n(Your info will encrypted, saved locally and will NOT be shared to ANYONE)\n")
+    username = input("Username: ")
+    password = getpass()
+    print("\n")
+    return username, password
 
-    username = str(config["username"])
-    password = str(config["password"])
+#encrypt username and password
+if not exists("cred.enc"):
+
+    #generate keys 
+    key = Fernet.generate_key()
+    cipher = Fernet(key)
+
+    #load credentials encode/encrypt
+    credential['username'], credential['password'] = get_credential()
+    credential_byte = json.dumps(credential).encode('utf-8')
+    cred_enc = cipher.encrypt(credential_byte)
+
+    #save encoded credentials to a file and save key to seperate file
+    with open("cred.enc", "wb") as f1, open("cred.key", "wb") as f2:
+        f1.write(cred_enc)
+        f2.write(key)
+
+#decrypt, open encoded credentials and open key
+with open("cred.enc", "rb") as f1, open("cred.key", "rb") as f2:
+    cred_decrypt = f1.read()
+    key = f2.read()
+    cipher = Fernet(key)
+    data = json.loads(cipher.decrypt(cred_decrypt).decode('utf-8'))
+
+#set username and password
+username = data["username"]
+password = data["password"]
 
 #asu login element paths
 username_input = '//*[@id="username"]'
@@ -64,7 +93,7 @@ try:
     print("*\n")
     driver.find_element_by_xpath(login_submit).click()
 except:
-    print("\nError... Looks like we had trouble logging in...\n\nCheck your login info in the config file!")
+    print("\nError... Looks like we had trouble logging in...\n\nYour login info may not be correct...\n* Delete both \"cred\" files to reset credentials*")
     driver.close()
     sys.exit()
 
@@ -80,7 +109,7 @@ try:
     #switch to iFrame
     switch_to_iFrame()
 except:
-    print("Error... Could not locate health form!\n\n(Maybe check your login info in the config file!)")
+    print("Error... Could not locate health form!\n\nYour login info may not be correct...\n* Delete both \"cred\" files to reset credentials*")
     driver.close()
     sys.exit()
 
@@ -97,7 +126,7 @@ except:
     #Q1 next
     driver.find_element_by_xpath(q1_next).click()
     print("*\n")
-    time.sleep(0.5)
+    time.sleep(1.5)
 
     #Q2 
     driver.find_element_by_xpath(q2_none).click()

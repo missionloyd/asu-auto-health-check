@@ -2,10 +2,10 @@
 Fill out the ASU health check automatically! 
 
 ## How it works
-This script will log into your ASU account and fill out the "none," "none" options on the survey completely hands free! You can even automate this script to run in the background of your computer (assuming that you're healthy). Minimal installation with some command line interface and logging info!
+This script will log into your ASU account with Firefox and fill out the "none," "none" options on the survey completely hands free! You can go even further by automating this script to run in the background of your computer (assuming that you're healthy). Minimal installation with some command line interface!
 
 ## Requirements
-- Firefox browser (will add more browser support in the future)
+- Firefox browser
 - The latest verson of python
   - Python libraries from the requirements package
 - Geckodriver for HTTP Requests 
