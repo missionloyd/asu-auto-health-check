@@ -1,5 +1,6 @@
 # created by an ASU student, "missionloyd"
 # give this project a lil star on GitHub if you're looking at the source code :)
+# pipreqs
 
 import time, json, sys
 from getpass import getpass
@@ -76,11 +77,21 @@ def switch_to_iFrame():
 #######################
 
 #open firefox and login
+#https://chromedriver.chromium.org/downloads
 try:
     print("Openeing Firefox and logging in...\n")
+
+    # If chrome driver is installed in this folder
+    # options = webdriver.ChromeOptions()
+    # options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    # options.add_experimental_option('useAutomationExtension', False)
+    # options.add_argument("--enable-javascript")
+    # driver = webdriver.Chrome(options=options, executable_path=r'./chromedriver')
+
     driver = webdriver.Firefox()
-    driver.get('https://www.asu.edu/healthcheck/preferences.html')
-    time.sleep(3)
+
+    driver.get('https://www.asu.edu/healthcheck/preferences.html#')
+    time.sleep(1.5)
 except:
     print("\nError... Looks Like you do not have FireFox installed!\nOr the URL to the form has changed!")
     sys.exit()
@@ -93,7 +104,7 @@ try:
     print("*\n")
     driver.find_element_by_xpath(login_submit).click()
 except:
-    print("\nError... Looks like we had trouble logging in...\n\nYour login info may not be correct...\n* Delete both \"cred\" files to reset credentials*")
+    print("\nError... Looks like we had trouble logging in...\n\nYour login info may not be correct...\n* Delete both \"cred\" files to reset credentials *")
     driver.close()
     sys.exit()
 
@@ -109,16 +120,17 @@ try:
     #switch to iFrame
     switch_to_iFrame()
 except:
-    print("Error... Could not locate health form!\n\nYour login info may not be correct...\n* Delete both \"cred\" files to reset credentials*")
+    print("Error... Could not locate health form!\n\nYour login info may not be correct...\n* Delete both \"cred\" files to reset credentials *")
     driver.close()
     sys.exit()
 
 #kill process if the form is already filled out
+
 try:
     driver.find_element_by_xpath(health_form_already_done)
 except:
 
-    #Q1 "Are you experiencing new or worsening of any of the following?"
+#Q1 "Are you experiencing new or worsening of any of the following?"
     driver.find_element_by_xpath(q1_none).click()
     print("*\n")
     time.sleep(0.5)
